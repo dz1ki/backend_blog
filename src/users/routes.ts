@@ -15,5 +15,5 @@ user.post("/registration", registration);
 user.post("/authorization", authorization);
 user.patch("/update", authMiddleware, updateUser);
 user.put("/update-password", authMiddleware, updatePassword);
-user.get("/list", authMiddleware, findAllUser);
+user.get("/list", findAllUser);
 user.delete("/drop", authMiddleware, dropUser);

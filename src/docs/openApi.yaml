@@ -95,16 +95,12 @@ paths:
 
   /user/list:
     get:
-      security:
-        - bearerAuth: []
       tags:
         - User
       summary: List all users.
       responses:
         200:
           description: Succes.
-        401:
-          description: Not authorized.
         500:
           description: Server error.
 
@@ -145,6 +141,66 @@ paths:
         500:
           description: Server error
 
+  /post/all:
+    get:
+      tags:
+        - Post
+      summary: Get all posts.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: number
+            enum:
+              - 10
+              - 20
+            default: 20
+        - name: page
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: number
+            default: 1
+      responses:
+        200:
+          description: Succes
+        500:
+          description: Server error
+
+  /post/list:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Posts authorized user.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: number
+            enum:
+              - 10
+              - 20
+            default: 20
+        - name: page
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: number
+            default: 1
+      responses:
+        200:
+          description: Succes
+        500:
+          description: Server error
+
   /post/update_text:
     patch:
       security:
@@ -169,7 +225,7 @@ paths:
         500:
           description: Server error.
 
-  /post/add_image_post:
+  /post/add_image:
     post:
       security:
         - bearerAuth: []
@@ -193,7 +249,7 @@ paths:
         500:
           description: Server error.
 
-  /post/destroy_image_post:
+  /post/destroy_image:
     delete:
       security:
         - bearerAuth: []
@@ -258,7 +314,7 @@ components:
         firstName:
           type: string
           description: User first name
-          example: Yra
+          example: Don
         lastName:
           type: string
           description: User last name
@@ -295,11 +351,11 @@ components:
         firstName:
           type: string
           description: User first name.
-          example: Yra
+          example: Derek
         lastName:
           type: string
           description: User last name.
-          example: Stell
+          example: Jordan
         email:
           type: string
           description: New user email.
@@ -350,7 +406,7 @@ components:
         postId:
           type: number
           description: The id of the post we want to change.
-          example: 1
+          example: 28
         title:
           type: string
           description: New post title.
@@ -368,7 +424,7 @@ components:
       properties:
         postId:
           type: string
-          example: 1
+          example: 28
           description: Post id.
         file:
           type: string
@@ -383,11 +439,11 @@ components:
         postId:
           type: string
           description: The id of the post we want to change. Must be a number.
-          example: 1
+          example: 28
         fileId:
           type: string
           description: The id of the file we want to delete in this post. Must be a number.
-          example: 1
+          example: 29
 
     deletePost:
       type: object
@@ -397,5 +453,5 @@ components:
       properties:
         postId:
           type: number
-          example: 1
+          example: 28
           description: Post id.

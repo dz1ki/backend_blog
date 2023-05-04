@@ -1,7 +1,7 @@
 import { saveCloudStorage } from "../libs/cloudinary/service";
 import { Post } from "../models/post";
 import { PostImages } from "../models/post_images";
-import { ResultSaveMedia, ReqFileDto, MapperUpPost } from "../types/blog";
+import { ResultSaveMedia, ReqFileDto, MapperUpPost } from "../types/post";
 import {
   checkPost,
   deleteMediaFromPost,

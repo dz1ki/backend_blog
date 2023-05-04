@@ -1,5 +1,3 @@
-import { type } from "os";
-
 type MiddelewareAuthDTO = {
   email: string;
   id: number;
@@ -81,5 +79,20 @@ export type DestroyImageDto = {
   body: {
     postId: string;
     fileId: string;
+  };
+};
+
+export type GetAllPostDTO = {
+  query: {
+    page: number;
+    limit: number;
+  };
+};
+
+export type GetPostUserDTO = {
+  user: MiddelewareAuthDTO;
+  query: {
+    page: number;
+    limit: number;
   };
 };
