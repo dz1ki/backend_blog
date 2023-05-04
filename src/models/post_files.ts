@@ -7,7 +7,6 @@ import {
   ForeignKey,
 } from "sequelize-typescript";
 import { Post } from "./post";
-import { UUID } from "crypto";
 
 @Table({
   tableName: "post_files",

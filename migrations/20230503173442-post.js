@@ -8,16 +8,14 @@ module.exports = {
         primaryKey: true,
         allowNull: false,
       },
-
       user_id: {
         type: Sequelize.INTEGER,
         onDelete: "CASCADE",
-        allowNull: false,
-        foreignKey: true,
+        isNullable: false,
         references: {
           model: "users",
           key: "id",
-          as: "group_id",
+          as: "user_id",
         },
       },
 

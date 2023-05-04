@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: User CRUD.
+  title: Blog.
   version: 1.0.0
 servers:
   - url: http://localhost:3000
@@ -145,6 +145,53 @@ paths:
         500:
           description: Server error
 
+  /post/update:
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Update post.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/updatePostUser"
+      responses:
+        200:
+          description: Succes.
+        201:
+          description: Post update.
+        400:
+          description: PostId and fileId must be a number or this user has no such post or there is no such file in this post.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /post/destroy:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Delete post .
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deletePost"
+      responses:
+        201:
+          description: Password changed in database.
+        400:
+          description: This user has no such post.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
 components:
   securitySchemes:
     bearerAuth:
@@ -247,3 +294,40 @@ components:
         file:
           type: string
           format: binary
+
+    updatePostUser:
+      type: object
+      required:
+        - postId
+      properties:
+        postId:
+          type: string
+          description: The id of the post we want to change. Must be a number.
+          example: 1
+        title:
+          type: string
+          description: New post title.
+          example: I rest today.
+        content:
+          type: string
+          description: New post content.
+          example: Nice outdoor recreation today.
+        fileId:
+          type: string
+          description: The id of the file we want to delete in this post. Must be a number.
+          example: 1
+        file:
+          type: string
+          format: binary
+          description: Add new media.
+
+    deletePost:
+      type: object
+      additionalProperties: false
+      required:
+        - postId
+      properties:
+        postId:
+          type: number
+          example: 1
+          description: Post id.
