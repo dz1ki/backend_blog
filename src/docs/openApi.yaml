@@ -123,6 +123,28 @@ paths:
         500:
           description: Server error.
 
+  /post/add:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Add post.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/addPostUser"
+      responses:
+        200:
+          description: Succes
+        201:
+          description: Post save
+        401:
+          description: Not authorized.
+        500:
+          description: Server error
+
 components:
   securitySchemes:
     bearerAuth:
@@ -207,3 +229,21 @@ components:
           type: string
           description: Repeat new user password
           example: "12345"
+
+    addPostUser:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+          description: Post title.
+          example: I'm resting.
+        content:
+          type: string
+          description: Post content.
+          example: Good rest in nature.
+        file:
+          type: string
+          format: binary
