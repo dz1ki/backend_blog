@@ -1,7 +1,6 @@
 import { saveCloudStorage } from "../libs/cloudinary/service";
 import { Post } from "../models/post";
-import { PostFiles } from "../models/post_files";
-import { User } from "../models/user";
+import { PostImages } from "../models/post_images";
 import { ResultSaveMedia, ReqFileDto, MapperUpPost } from "../types/blog";
 import {
   checkPost,
@@ -10,87 +9,60 @@ import {
   mapperUpdatePost,
 } from "./helper";
 
-export async function createPost(
+export async function createPostText(
   title: string,
   content: string,
-  userId: number,
-  files: ReqFileDto
+  userId: number
 ) {
-  const fileBuffer = files[0];
-  const resultSavePost = await Post.create({ userId, title, content });
-  if (fileBuffer) {
-    const resultSaveMedia: ResultSaveMedia = await saveCloudStorage(
-      fileBuffer.buffer,
-      userId
-    );
-    await PostFiles.create({
-      postId: resultSavePost.id,
-      fileName: resultSaveMedia.public_id,
-      file: resultSaveMedia.url,
-    });
-  }
+  await Post.create({ userId, title, content });
   return { message: `Post ${title} saved successfully`, statusCode: 201 };
 }
 
-export async function change(
+export async function changeText(
   userId: number,
-  files: ReqFileDto,
   title: string,
   content: string,
-  postId: number,
-  fileId: number
+  postId: number
 ) {
-  const fileBuffer = files[0];
-  const oneUser = await User.findOne({
-    where: { id: userId },
-    include: [
-      {
-        model: Post,
-        include: [
-          {
-            model: PostFiles,
-          },
-        ],
-      },
-    ],
-  });
-  checkPost(oneUser, postId);
-  if (fileId) {
-    await dropMeadiaInPost(oneUser, fileId);
-  }
-  if (fileBuffer) {
-    const resultSaveMedia: ResultSaveMedia = await saveCloudStorage(
-      fileBuffer.buffer,
-      userId
-    );
-    await PostFiles.create({
-      postId,
-      fileName: resultSaveMedia.public_id,
-      file: resultSaveMedia.url,
-    });
-  }
+  await checkPost(userId, postId);
   const objSave: MapperUpPost = mapperUpdatePost(content, title);
   await Post.update(objSave, { where: { id: postId } });
   return { message: `Post updated !`, statusCode: 201 };
 }
 
-export async function destroyPost(id: number, postId: number) {
-  const oneUser = await User.findOne({
-    where: { id },
-    include: [
-      {
-        model: Post,
-        include: [
-          {
-            model: PostFiles,
-          },
-        ],
-      },
-    ],
+export async function addImage(
+  userId: number,
+  files: ReqFileDto,
+  postId: number
+) {
+  await checkPost(userId, postId);
+  const fileBuffer = files[0];
+  const resultSaveMedia: ResultSaveMedia = await saveCloudStorage(
+    fileBuffer.buffer,
+    userId
+  );
+  await PostImages.create({
+    postId,
+    fileName: resultSaveMedia.public_id,
+    file: resultSaveMedia.url,
   });
-  checkPost(oneUser, postId);
+  return { message: `Image saved.`, statusCode: 201 };
+}
+
+export async function destroyImagePost(
+  userId: number,
+  fileId: number,
+  postId: number
+) {
+  const oneUser = await checkPost(userId, postId);
+  await dropMeadiaInPost(oneUser, fileId);
+  return { message: `Image delete.`, statusCode: 201 };
+}
+
+export async function destroyPost(userId: number, postId: number) {
+  const oneUser = await checkPost(userId, postId);
   deleteMediaFromPost(oneUser, postId);
   const post = await Post.findOne({ where: { id: postId } });
   await post.destroy();
-  return { message: `Post delete!`, statusCode: 201 };
+  return { message: `Post delete.`, statusCode: 201 };
 }

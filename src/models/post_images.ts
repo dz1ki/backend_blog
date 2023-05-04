@@ -9,10 +9,10 @@ import {
 import { Post } from "./post";
 
 @Table({
-  tableName: "post_files",
+  tableName: "post_images",
   timestamps: false,
 })
-export class PostFiles extends Model {
+export class PostImages extends Model {
   @Column({
     type: DataType.INTEGER(),
     primaryKey: true,

@@ -1,8 +1,22 @@
 import cloudinary from "../libs/cloudinary";
-import { PostFiles } from "../models/post_files";
+import { Post } from "../models/post";
+import { PostImages } from "../models/post_images";
 import { User } from "../models/user";
 
-export function checkPost(oneUser: User, postId: number) {
+export async function checkPost(userId: number, postId: number) {
+  const oneUser = await User.findOne({
+    where: { id: userId },
+    include: [
+      {
+        model: Post,
+        include: [
+          {
+            model: PostImages,
+          },
+        ],
+      },
+    ],
+  });
   const result = oneUser.posts.some((post) => post.id === postId);
   if (!result) {
     throw {
@@ -10,11 +24,12 @@ export function checkPost(oneUser: User, postId: number) {
       statusCode: 400,
     };
   }
+  return oneUser;
 }
 
 export function checkMeadiaInPost(oneUser: User, fileId: number) {
   const result = oneUser.posts.some((post) =>
-    post.postFiles.some((file) => file.id === fileId)
+    post.postImages.some((file) => file.id === fileId)
   );
   if (!result) {
     throw {
@@ -27,10 +42,10 @@ export function checkMeadiaInPost(oneUser: User, fileId: number) {
 export async function dropMeadiaInPost(oneUser: User, fileId: number) {
   checkMeadiaInPost(oneUser, fileId);
   const objFile = oneUser.posts.map((post) =>
-    post.postFiles.find((file) => file.id === fileId)
+    post.postImages.find((file) => file.id === fileId)
   );
   cloudinary.v2.uploader.destroy(objFile[0].fileName);
-  await PostFiles.destroy({
+  await PostImages.destroy({
     where: {
       id: fileId,
     },
@@ -54,7 +69,7 @@ export function mapperUpdatePost(content: string, title: string) {
 export async function deleteMediaFromPost(oneUser: User, postId: number) {
   for (const post of oneUser.posts) {
     if (post.id === postId) {
-      for (const file of post.postFiles) {
+      for (const file of post.postImages) {
         await cloudinary.v2.uploader.destroy(file.fileName);
       }
     }

@@ -123,18 +123,18 @@ paths:
         500:
           description: Server error.
 
-  /post/add:
+  /post/create:
     post:
       security:
         - bearerAuth: []
       tags:
         - Post
-      summary: Add post.
+      summary: Create post .
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              $ref: "#/components/schemas/addPostUser"
+              $ref: "#/components/schemas/createPost"
       responses:
         200:
           description: Succes
@@ -145,25 +145,73 @@ paths:
         500:
           description: Server error
 
-  /post/update:
+  /post/update_text:
     patch:
       security:
         - bearerAuth: []
       tags:
         - Post
-      summary: Update post.
+      summary: Update post text.
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              $ref: "#/components/schemas/updatePostUser"
+              $ref: "#/components/schemas/updatePostUserText"
       responses:
         200:
           description: Succes.
         201:
           description: Post update.
         400:
-          description: PostId and fileId must be a number or this user has no such post or there is no such file in this post.
+          description: This user has no such post.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /post/add_image_post:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Add Image post.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/addImagePost"
+      responses:
+        200:
+          description: Succes.
+        201:
+          description: Post update.
+        400:
+          description: Id must be a number or this user has no such post.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /post/destroy_image_post:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Delete image at post.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/destroyImagePost"
+      responses:
+        200:
+          description: Succes.
+        201:
+          description: Post update.
+        400:
+          description: Id must be a number or this user has no such post, orThere is no such file in this post.
         401:
           description: Not authorized.
         500:
@@ -175,7 +223,8 @@ paths:
         - bearerAuth: []
       tags:
         - Post
-      summary: Delete post .
+      summary: Delete post.
+      description: Removes images from the cloud.
       requestBody:
         required: true
         content:
@@ -277,7 +326,7 @@ components:
           description: Repeat new user password
           example: "12345"
 
-    addPostUser:
+    createPost:
       type: object
       required:
         - title
@@ -291,18 +340,16 @@ components:
           type: string
           description: Post content.
           example: Good rest in nature.
-        file:
-          type: string
-          format: binary
 
-    updatePostUser:
+    updatePostUserText:
       type: object
+      additionalProperties: false
       required:
         - postId
       properties:
         postId:
-          type: string
-          description: The id of the post we want to change. Must be a number.
+          type: number
+          description: The id of the post we want to change.
           example: 1
         title:
           type: string
@@ -312,14 +359,35 @@ components:
           type: string
           description: New post content.
           example: Nice outdoor recreation today.
+
+    addImagePost:
+      type: object
+      required:
+        - postId
+        - file
+      properties:
+        postId:
+          type: string
+          example: 1
+          description: Post id.
+        file:
+          type: string
+          format: binary
+
+    destroyImagePost:
+      type: object
+      required:
+        - postId
+        - fileId
+      properties:
+        postId:
+          type: string
+          description: The id of the post we want to change. Must be a number.
+          example: 1
         fileId:
           type: string
           description: The id of the file we want to delete in this post. Must be a number.
           example: 1
-        file:
-          type: string
-          format: binary
-          description: Add new media.
 
     deletePost:
       type: object

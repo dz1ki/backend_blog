@@ -10,7 +10,7 @@ import {
   ForeignKey,
 } from "sequelize-typescript";
 import { User } from "./user";
-import { PostFiles } from "./post_files";
+import { PostImages } from "./post_images";
 
 @Table({
   tableName: "posts",
@@ -45,8 +45,8 @@ export class Post extends Model {
   @BelongsTo(() => User)
   user: User;
 
-  @HasMany(() => PostFiles)
-  postFiles: PostFiles[];
+  @HasMany(() => PostImages)
+  postImages: PostImages[];
 
   @CreatedAt
   @Column({ field: "created_at" })

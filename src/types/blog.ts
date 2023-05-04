@@ -39,23 +39,20 @@ export type ResultSaveMedia = {
   api_key?: string;
 };
 
-export type AddMediaDTO = {
+export type AddPostTextDTO = {
   user: MiddelewareAuthDTO;
   body: {
     title: string;
     content: string;
   };
-  files?: ReqFileDto;
 };
 
-export type UpdatePostDto = {
+export type UpdatePostTextDto = {
   user: MiddelewareAuthDTO;
-  files?: ReqFileDto;
   body: {
     title: string;
     content: string;
-    fileId: string;
-    postId: string;
+    postId: number;
   };
 };
 
@@ -68,5 +65,21 @@ export type DestroyDto = {
   user: MiddelewareAuthDTO;
   body: {
     postId: number;
+  };
+};
+
+export type AddPostImageDto = {
+  user: MiddelewareAuthDTO;
+  body: {
+    postId: string;
+  };
+  files: ReqFileDto;
+};
+
+export type DestroyImageDto = {
+  user: MiddelewareAuthDTO;
+  body: {
+    postId: string;
+    fileId: string;
   };
 };
