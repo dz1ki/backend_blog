@@ -10,14 +10,14 @@ export async function checkUniqueEmail(email: string) {
   }
 }
 
+export async function hashPassword(passwordUser: string) {
+  return await bcrypt.hash(passwordUser, 5);
+}
+
 export function checkUser(findUser: User) {
   if (!findUser) {
     throw { message: "No such user exists", statusCode: 404 };
   }
-}
-
-export async function hashPassword(passwordUser: string) {
-  return await bcrypt.hash(passwordUser, 5);
 }
 
 export async function checkPasswordUser(
