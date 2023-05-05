@@ -1,0 +1,459 @@
+openapi: 3.0.0
+info:
+  title: Blog.
+  version: 1.0.0
+servers:
+  - url: http://68.183.67.53:3000
+    description: Production server
+  - url: http://localhost:3000
+    description: Development server
+
+paths:
+  /user/registration:
+    post:
+      tags:
+        - User
+      summary: Registration user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/registrationUser"
+      responses:
+        201:
+          description: User registered.
+        400:
+          description: User with this email already exists.
+        500:
+          description: Server error.
+
+  /user/authorization:
+    post:
+      tags:
+        - User
+      summary: Authorization user .
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/authorizationUser"
+      responses:
+        201:
+          description: Token created.
+        404:
+          description: No such user exists.
+        400:
+          description: Wrong password.
+        500:
+          description: Server error.
+
+  /user/update:
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      summary: Update user data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updateUser"
+      responses:
+        201:
+          description: User update.
+        400:
+          description: User with this email already exists.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /user/update-password:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      summary: Update password .
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updatePassword"
+      responses:
+        201:
+          description: Password changed in database.
+        400:
+          description: New passwords do not match or Wrong password.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /user/list:
+    get:
+      tags:
+        - User
+      summary: List all users.
+      responses:
+        200:
+          description: Succes.
+        500:
+          description: Server error.
+
+  /user/drop:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      summary: Delete user.
+      responses:
+        200:
+          description: Succes.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /post/create:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Create post .
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createPost"
+      responses:
+        200:
+          description: Succes
+        201:
+          description: Post save
+        401:
+          description: Not authorized.
+        500:
+          description: Server error
+
+  /post/all:
+    get:
+      tags:
+        - Post
+      summary: Get all posts.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: number
+            enum:
+              - 10
+              - 20
+            default: 20
+        - name: page
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: number
+            default: 1
+      responses:
+        200:
+          description: Succes
+        500:
+          description: Server error
+
+  /post/list:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Posts authorized user.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: number
+            enum:
+              - 10
+              - 20
+            default: 20
+        - name: page
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: number
+            default: 1
+      responses:
+        200:
+          description: Succes
+        500:
+          description: Server error
+
+  /post/update_text:
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Update post text.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updatePostUserText"
+      responses:
+        200:
+          description: Succes.
+        201:
+          description: Post update.
+        400:
+          description: This user has no such post.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /post/add_image:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Add Image post.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/addImagePost"
+      responses:
+        200:
+          description: Succes.
+        201:
+          description: Post update.
+        400:
+          description: Id must be a number or this user has no such post.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /post/destroy_image:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Delete image at post.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/destroyImagePost"
+      responses:
+        200:
+          description: Succes.
+        201:
+          description: Post update.
+        400:
+          description: Id must be a number or this user has no such post, orThere is no such file in this post.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /post/destroy:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Post
+      summary: Delete post.
+      description: Removes images from the cloud.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deletePost"
+      responses:
+        201:
+          description: Password changed in database.
+        400:
+          description: This user has no such post.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    registrationUser:
+      type: object
+      additionalProperties: false
+      required:
+        - password
+        - userEmail
+      properties:
+        firstName:
+          type: string
+          description: User first name
+          example: Don
+        lastName:
+          type: string
+          description: User last name
+          example: Stell
+        userEmail:
+          type: string
+          description: User email
+          example: admin@example.com
+        password:
+          type: string
+          description: User password
+          example: "1234"
+
+    authorizationUser:
+      type: object
+      additionalProperties: false
+      required:
+        - password
+        - email
+      properties:
+        email:
+          type: string
+          description: User email
+          example: admin@example.com
+        password:
+          type: string
+          description: Password user.
+          example: "1234"
+
+    updateUser:
+      type: object
+      additionalProperties: false
+      properties:
+        firstName:
+          type: string
+          description: User first name.
+          example: Derek
+        lastName:
+          type: string
+          description: User last name.
+          example: Jordan
+        email:
+          type: string
+          description: New user email.
+          example: pete7833@examples.com
+
+    updatePassword:
+      type: object
+      additionalProperties: false
+      required:
+        - oldPassword
+        - newPassword
+        - repeatNewPassword
+      properties:
+        oldPassword:
+          type: string
+          description: Old user password
+          example: "1234"
+        newPassword:
+          type: string
+          description: New user password
+          example: "12345"
+        repeatNewPassword:
+          type: string
+          description: Repeat new user password
+          example: "12345"
+
+    createPost:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+          description: Post title.
+          example: I'm resting.
+        content:
+          type: string
+          description: Post content.
+          example: Good rest in nature.
+
+    updatePostUserText:
+      type: object
+      additionalProperties: false
+      required:
+        - postId
+      properties:
+        postId:
+          type: number
+          description: The id of the post we want to change.
+          example: 28
+        title:
+          type: string
+          description: New post title.
+          example: I rest today.
+        content:
+          type: string
+          description: New post content.
+          example: Nice outdoor recreation today.
+
+    addImagePost:
+      type: object
+      required:
+        - postId
+        - file
+      properties:
+        postId:
+          type: string
+          example: 28
+          description: Post id.
+        file:
+          type: string
+          format: binary
+
+    destroyImagePost:
+      type: object
+      required:
+        - postId
+        - fileId
+      properties:
+        postId:
+          type: string
+          description: The id of the post we want to change. Must be a number.
+          example: 28
+        fileId:
+          type: string
+          description: The id of the file we want to delete in this post. Must be a number.
+          example: 29
+
+    deletePost:
+      type: object
+      additionalProperties: false
+      required:
+        - postId
+      properties:
+        postId:
+          type: number
+          example: 28
+          description: Post id.

@@ -1,0 +1,13 @@
+{
+  "DBconfig": {
+    "password": ""
+  },
+  "JWT": {
+    "key": ""
+  },
+  "cloudinary": {
+    "name": "",
+    "key": "",
+    "secret": ""
+  }
+}

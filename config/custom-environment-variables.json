@@ -1,0 +1,24 @@
+{
+  "DBconfig": {
+    "database": "POSTGRES_DB",
+    "username": "POSTGRES_USER",
+    "dialect": "postgres",
+    "host": "POSTGRES_HOST",
+    "port": "POSTGRES_PORT",
+    "password": "POSTGRES_PASSWORD"
+  },
+
+  "app": {
+    "port": "APP_PORT"
+  },
+
+  "JWT": {
+    "key": "JWT_SECRET"
+  },
+
+  "cloudinary": {
+    "name": "CLOUDINARY_NAME",
+    "key": "CLOUDINARY_KEY",
+    "secret": "CLOUDINARY_SECRET"
+  }
+}
