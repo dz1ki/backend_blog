@@ -8,7 +8,6 @@ import {
   DestroyDto,
   DestroyImageDto,
   UpdatePostTextDto,
-  GetPostUserDTO,
 } from "../types/post";
 import {
   addImage,
@@ -43,25 +42,6 @@ export async function getAllPosts(req: GetAllPostDTO, res) {
         { model: User, attributes: ["firstName", "lastName"] },
         { model: PostImages, attributes: ["id", "fileName", "file"] },
       ],
-    });
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(error.statusCode || 500).json(error.message || "Server error");
-  }
-}
-
-export async function getPostUser(req: GetPostUserDTO, res) {
-  try {
-    const { id } = req.user;
-    const { page, limit } = req.query;
-    const offset = (page - 1) * limit;
-    const result = await Post.findAll({
-      where: { userId: id },
-      limit,
-      offset,
-      order: [["id", "ASC"]],
-      attributes: ["id", "title", "content", "createdAt"],
-      include: [{ model: PostImages, attributes: ["id", "fileName", "file"] }],
     });
     res.status(200).json(result);
   } catch (error) {

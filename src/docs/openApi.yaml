@@ -9,29 +9,10 @@ servers:
     description: Production server
 
 paths:
-  /user/registration:
+  /auth/login:
     post:
       tags:
-        - User
-      summary: Registration user.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/registrationUser"
-      responses:
-        201:
-          description: User registered.
-        400:
-          description: User with this email already exists.
-        500:
-          description: Server error.
-
-  /user/authorization:
-    post:
-      tags:
-        - User
+        - Auth
       summary: Authorization user .
       requestBody:
         required: true
@@ -49,135 +30,31 @@ paths:
         500:
           description: Server error.
 
-  /user/update:
-    patch:
-      security:
-        - bearerAuth: []
+  /auth/sing-up:
+    post:
       tags:
-        - User
-      summary: Update user data.
+        - Auth
+      summary: Registration user.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/updateUser"
+              $ref: "#/components/schemas/registrationUser"
       responses:
         201:
-          description: User update.
+          description: User registered.
         400:
           description: User with this email already exists.
-        401:
-          description: Not authorized.
         500:
           description: Server error.
 
-  /user/update-password:
-    put:
-      security:
-        - bearerAuth: []
-      tags:
-        - User
-      summary: Update password .
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/updatePassword"
-      responses:
-        201:
-          description: Password changed in database.
-        400:
-          description: New passwords do not match or Wrong password.
-        401:
-          description: Not authorized.
-        500:
-          description: Server error.
-
-  /user/list:
-    get:
-      tags:
-        - User
-      summary: List all users.
-      responses:
-        200:
-          description: Succes.
-        500:
-          description: Server error.
-
-  /user/drop:
-    delete:
-      security:
-        - bearerAuth: []
-      tags:
-        - User
-      summary: Delete user.
-      responses:
-        200:
-          description: Succes.
-        401:
-          description: Not authorized.
-        500:
-          description: Server error.
-
-  /post/create:
-    post:
-      security:
-        - bearerAuth: []
-      tags:
-        - Post
-      summary: Create post .
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/createPost"
-      responses:
-        200:
-          description: Succes
-        201:
-          description: Post save
-        401:
-          description: Not authorized.
-        500:
-          description: Server error
-
-  /post/all:
-    get:
-      tags:
-        - Post
-      summary: Get all posts.
-      parameters:
-        - name: limit
-          in: query
-          required: false
-          explode: true
-          schema:
-            type: number
-            enum:
-              - 10
-              - 20
-            default: 20
-        - name: page
-          in: query
-          required: false
-          explode: true
-          schema:
-            type: number
-            default: 1
-      responses:
-        200:
-          description: Succes
-        500:
-          description: Server error
-
-  /post/list:
+  /profile/posts:
     get:
       security:
         - bearerAuth: []
       tags:
-        - Post
+        - Profile
       summary: Posts authorized user.
       parameters:
         - name: limit
@@ -203,12 +80,124 @@ paths:
         500:
           description: Server error
 
-  /post/update_text:
+  /profile/update:
     patch:
       security:
         - bearerAuth: []
       tags:
-        - Post
+        - Profile
+      summary: Update user data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updateUser"
+      responses:
+        201:
+          description: User update.
+        400:
+          description: User with this email already exists.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /profile/change-password:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Profile
+      summary: Update password .
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updatePassword"
+      responses:
+        201:
+          description: Password changed in database.
+        400:
+          description: New passwords do not match or Wrong password.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /profile/destroy:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Profile
+      summary: Delete user.
+      responses:
+        200:
+          description: Succes.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /posts/list:
+    get:
+      tags:
+        - Posts
+      summary: Get all posts.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: number
+            enum:
+              - 10
+              - 20
+            default: 20
+        - name: page
+          in: query
+          required: false
+          explode: true
+          schema:
+            type: number
+            default: 1
+      responses:
+        200:
+          description: Succes
+        500:
+          description: Server error
+
+  /posts/create:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Posts
+      summary: Create post .
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createPost"
+      responses:
+        200:
+          description: Succes
+        201:
+          description: Post save
+        401:
+          description: Not authorized.
+        500:
+          description: Server error
+
+  /posts/update:
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - Posts
       summary: Update post text.
       requestBody:
         content:
@@ -227,12 +216,36 @@ paths:
         500:
           description: Server error.
 
-  /post/add_image:
+  /posts/destroy:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Posts
+      summary: Delete post.
+      description: Removes images from the cloud.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deletePost"
+      responses:
+        201:
+          description: Password changed in database.
+        400:
+          description: This user has no such post.
+        401:
+          description: Not authorized.
+        500:
+          description: Server error.
+
+  /posts/attach-image:
     post:
       security:
         - bearerAuth: []
       tags:
-        - Post
+        - Posts
       summary: Add Image post.
       requestBody:
         content:
@@ -251,12 +264,12 @@ paths:
         500:
           description: Server error.
 
-  /post/destroy_image:
+  /posts/destroy-image:
     delete:
       security:
         - bearerAuth: []
       tags:
-        - Post
+        - Posts
       summary: Delete image at post.
       requestBody:
         content:
@@ -275,27 +288,14 @@ paths:
         500:
           description: Server error.
 
-  /post/destroy:
-    delete:
-      security:
-        - bearerAuth: []
+  /users/list:
+    get:
       tags:
-        - Post
-      summary: Delete post.
-      description: Removes images from the cloud.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/deletePost"
+        - Users
+      summary: List all users.
       responses:
-        201:
-          description: Password changed in database.
-        400:
-          description: This user has no such post.
-        401:
-          description: Not authorized.
+        200:
+          description: Succes.
         500:
           description: Server error.
 
