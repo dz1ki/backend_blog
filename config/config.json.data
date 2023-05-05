@@ -1,0 +1,12 @@
+{
+  "development": {
+    "database": "",
+    "username": "",
+    "dialect": "",
+    "host": "pg_db",
+    "port": ,
+    "timezone": "utc",
+    "omitNull": true,
+    "password": ""
+  }
+}
